@@ -17,12 +17,13 @@
       * create a file src/firebase/config.js then paste the content right here
   * install firebase package
     * npm install firebase
-  * import 'firebase/storage'    : storage to store our images
-  * import 'firebase/firestore'  : database 
-  * initialize storage service and firestore service
-    * const projectStorage = firebase.storage()
-    * const projectFirestore = firebase.firestore()
-  * export {projectStorage, projectFirestore}
+  * src/firebase/config.js
+    * import 'firebase/storage'    : storage to store our images
+    * import 'firebase/firestore'  : database 
+    * initialize storage service and firestore service
+      * const projectStorage = firebase.storage()
+      * const projectFirestore = firebase.firestore()
+    * export {projectStorage, projectFirestore}
   * setup backend firebase database
     * create a cloud firestore 
       * create a database
@@ -31,4 +32,52 @@
   * select storage service on the left menu
     * change rule
       * delete anything at the right of write except semicolon
+* src/App.js
+  * nest Title component
 * upload form
+  * src/comps/UploadForm.js
+    * useState() to set selected file
+    * declare array variable for allowed image types
+    * define onChange event handler for input tag of file type
+    * useState() to set error of selecting non image file
+* separate the firebase logic from the component
+  * create a custom hook to handle file upload on firebase storage
+    * src/hooks/useStorage.js
+      * Three useState() for progress, error, and url
+      * component has a file parameter to receive a user selected file 
+      * import projectStorage from ./firebase/config
+      * useEffect() hook which is dependent on a given file 
+        * get reference to a file being uploaded to projectStorage
+          * const storageRef = projectStorage.ref(file.name) 
+        * upload the file to the referencing storage (the description below is deprecated, but logic is almost same)
+          * [refer to firestore document](https://firebase.google.com/docs/storage/web/upload-files)
+          * storageRef.put(file); // this is a asynchronous, it takes some time
+          * we can attatch a listener to it which is going to fire functions when certain events happen
+          * listen for 'state_changed' event, and it happens about 3~4 or 5~6 times during the upload
+            * set percentage of the upload
+            * set error, in case of something wrong happens
+            * set download url when upload completes
+              * To get download url we call storageRef.getDownloadURL() which is asynchronous 
+        * return {progress, url, error}
+      * export default useStorage
+* upload form progress bar
+* create a new component, src/comps/ProgressBar.js
+  * import react, useStorage custome hook
+  * create a ProgressBar function
+  * export ProgressBar
+* nest ProgressBar in the UploadForm component 
+  * pass the file selected to ProgressBar component
+  * pass the setFile function reference to ProgressBar component to set file to null when upload completes
+* Back to src/comps/ProgressBar.js
+  * add {file, setFile} as function's parameters  
+  * const {url, progress} = useStorage(file)
+* src/App.js
+  * nest UploadForm component below Title component
+* Back to src/comps/ProgressBar.js
+  * remove ProgressBar when it reaches 100%
+  * when url is present then we know it reaches 100%
+  * let useEffect() hook's dependency array include url
+* Back to useStorage hook
+  * when upload completes, We will save the url to firestore
+  * [refer to firebase document](https://firebase.google.com/docs/firestore/quickstart)
+  *  
