@@ -77,7 +77,7 @@
   * remove ProgressBar when it reaches 100%
   * when url is present then we know it reaches 100%
   * let useEffect() hook's dependency array include url
-* Back to useStorage hook
-  * when upload completes, We will save the url to firestore
+  * when upload completes, We will save the url to firestore : 
+    * I moved this code from useStorage to ProgressBar, because 'state_changed' event's third argument which is a function that should be called when upload completes, is being called twice
   * [refer to firebase document](https://firebase.google.com/docs/firestore/quickstart)
   *  

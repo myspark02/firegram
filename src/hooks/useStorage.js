@@ -1,7 +1,6 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useState, useEffect } from 'react';
-import { projectStorage, projectFirestore} from '../firebase/config';
+import { projectStorage} from '../firebase/config';
 
 const useStorage = (file) => {
   const [progress, setProgress] = useState(0);
@@ -9,6 +8,7 @@ const useStorage = (file) => {
   const [url, setUrl] = useState(null);
 
   useEffect(() => {
+    console.log('useStorage > useEffect')
     // references
     // const storageRef = projectStorage.ref(file.name);
     const storageRef = ref(projectStorage, file.name)
@@ -26,8 +26,11 @@ const useStorage = (file) => {
                     // Observe state change events such as progress, pause, and resume
                     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                     const percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('byteTransferred:', snapshot.bytesTransferred);
+                    console.log('totalBytes:', snapshot.totalBytes);
                     setProgress(percentage);
-                    console.log('Upload is ' + progress + '% done');
+                    
+                    console.log('Upload is ^ ' + percentage + '% done');
                     switch (snapshot.state) {
                         case 'paused':
                             console.log('Upload is paused');
@@ -42,22 +45,17 @@ const useStorage = (file) => {
                     setError(error);
                 }, 
                 () => {
+                    console.log('completion handler called')
                     // Handle successful uploads on complete
                     // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                     getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
                         console.log('File available at', downloadURL);                        
-                        const createdAt = serverTimestamp();
-                        try {
-                            const docRef =  await addDoc(collection(projectFirestore, "images"), {downloadURL, createdAt});
-                            setUrl(downloadURL);
-                          } catch (e) {
-                            console.error("Error adding document: ", e);
-                          }
+                        setUrl(downloadURL)
                     });
                 }
     );
   }, [file]);
-
+  
   return { progress, url, error };
 }
 
