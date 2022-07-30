@@ -94,3 +94,58 @@
    * call useFirestore custom hook inside of ImageGrid
    * Cycle through the docs which is returned by calling useFirestore hook, and display those docs' images
 * creating a modal which pops up when we click each image
+* src/comps/Modal.js
+* import Modal component inside App, and place it just below ImageGrid component
+* We need a way to pass the clicked image info to Modal component, for that declare selectedImg state in App component, pass setSelectedImg function to ImageGrid component by props, and add setSelectedImg parameter to ImageGrid component.
+* In ImageGrid jsx code, add anonymous function which call setSelectedImg with clicked image's url as onClick event handler 
+* In App jsx code, pass selectedImg to Modal as props, add selectedImg parameter to Modal component, in Modal's jsx code set Img tag's src attribute value to selectedImg
+* Now you can see modal's backdrop always upfront, so no image can be clicked. To resolve this problem, we conditionally render Modal only when selectedImg is not null
+  * this code is go to App's jsx code
+* But again now we still can't close the modal
+  * to resolve this we set selectedImg to null when backdrop is clicked.
+  * pass setSelectedImg function to Modal from App, add setSelectedImg parameter to Modal, add a function which call setSelectedImg with null as backdrop div's click event handler
+* But again now modal is closed even though we click an image itselft.
+  * to resolve this we check for the event target object
+    * In click event handler we call setSelectedImg(null) only when classList of event's target contains 'backdrop'.
+* Animation with Framer Motion package
+  * [Framer Motion is animation package for react](https://www.framer.com/motion/)
+  * install a framer motion package
+    * npm install framer-motion
+  * src/comps/ImageGrid.js
+    * import {motion} from 'framer-motion'
+    * add animation to 'img-wrap' div, to do this we just change div tag to motion.div tag, add animation attribute whileHover={{opacity:1}}, add animation attribute layout then when a new image added they animate to arrange images to the right position.
+    * add animation to image so that it first appears it fades in
+      * change img tag to motion.img 
+      * add initial, animate, transition attribute like belows
+        ```
+         initial = {{opacitiy: 0}} 
+         animate = {{ opacity: 1}}
+         transition = {{ delay: 1}}
+        ```
+  * src/comps/ProgressBar.js
+    * add animation to progress bar
+    * import {motion} from 'framer-motion'
+    * remove style attribute from 'progress-bar' div
+    * change div to motion.div
+    * add initial, animate like belows
+      ```
+      <motion.div className='progress-bar'
+        initial={{ width: 0}}
+        animate= {{ width: progress + '%'}}
+        >
+      </motion.div>
+  * src/comps/Modal.js
+    * add animation to Modal
+    * import {motion} from 'framer-motion'
+    * change div to motion.div
+    * add initial, animate like belows
+      ```
+      initial = {{ opacity : 0 }}
+      animate = {{ opacity : 1 }}
+      ```
+    * change img to motion.img
+    * add initial, animate like belows
+      ```
+        initial = {{ y : "-100vh" }}
+        animate = {{ y : 0}}
+      ```
