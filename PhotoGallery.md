@@ -80,4 +80,17 @@
   * when upload completes, We will save the url to firestore : 
     * I moved this code from useStorage to ProgressBar, because 'state_changed' event's third argument which is a function that should be called when upload completes, is being called twice
   * [refer to firebase document](https://firebase.google.com/docs/firestore/quickstart)
-  *  
+*  Listen to firestore collection to get all of the urls  in real time as they added to our project for that we'll be creating a new custom hook called useFirestore
+*  Firestore hook & showing images
+*  set up a connection between our app and firestore to listen for documents being added to this collection and retrieve those documents and cycle through them in react component and output image for each one of them for that create a new file called comps/ImageGrid.js
+*  src/comps/ImageGrid.js
+*  Nest the ImageGrid component into App and place it right below the UploadForm component
+*  Let's useFirestore hook we gonna create now do the firestore work for use 
+*  create a new file called hooks/useFirestore.js
+   *  We need to communicate with firestore database to get all the image urls, and those code will go inside useEffect hook
+      * Each time a change occurs inside the collection we get documents from the collection
+      * [refer to firestore document](https://firebase.google.com/docs/firestore/query-data/listen#listen_to_multiple_documents_in_a_collection)
+ * src/comps/ImageGrid.js
+   * call useFirestore custom hook inside of ImageGrid
+   * Cycle through the docs which is returned by calling useFirestore hook, and display those docs' images
+* creating a modal which pops up when we click each image
